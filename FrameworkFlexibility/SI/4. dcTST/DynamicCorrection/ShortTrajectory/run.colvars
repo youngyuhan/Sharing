@@ -1,0 +1,21 @@
+#TEMPLATE
+colvarsTrajFrequency 1 		
+colvarsRestartFrequency 10000
+
+colvar {
+  name rc
+
+  distanceZ {
+    main {atomNumbers 1345}
+    scalable off
+    ref  {dummyAtom (13.67627147, 13.71276217, 13.65892066)}
+    axis {(1, 0, 0)}
+  }
+}
+
+harmonic {
+  name spring
+  colvars rc
+  forceConstant 0 # set the spring force to 0 to let adsorbate move freely
+  centers 9.387
+}

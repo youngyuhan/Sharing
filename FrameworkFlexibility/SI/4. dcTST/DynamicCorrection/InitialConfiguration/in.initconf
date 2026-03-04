@@ -1,0 +1,66 @@
+#################################### set box ###########################################################
+units           real
+atom_style      full
+boundary        p p p
+
+########################### set initial config and FF ###################################################
+pair_style      lj/cut 12.5
+bond_style      harmonic
+angle_style     hybrid fourier cosine/periodic
+dihedral_style  harmonic
+improper_style  fourier
+
+pair_modify     tail yes mix arithmetic
+dielectric      1.0
+special_bonds   lj/coul 0.0 0.0 1.0
+box tilt        large
+read_data       ABAYIO_CCl4.data
+
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+group           frame type 1:5
+group           adsorbate type 6
+
+############################ monitoring simulation #################################################
+compute         COM_FRAME frame com
+variable        xfw equal c_COM_FRAME[1]
+variable        yfw equal c_COM_FRAME[2]
+variable        zfw equal c_COM_FRAME[3]
+variable        t equal 308.15
+variable        s equal 1123 #random seed
+
+thermo          1000 
+thermo_style	custom step etotal pe ke vol press temp v_xfw v_yfw v_zfw
+compute         t_temp all temp
+thermo_modify	temp t_temp format float %4.10g
+
+################################# pre-run setting #####################################################
+reset_timestep	0
+timestep        1
+run_style       verlet
+fix             TETHER1 all momentum 1 linear 1 1 1 angular
+velocity        all create $t $s rot yes mom yes dist gaussian
+
+include         REGIONS.data # prevent the adsorbate from escaping the cage
+region          TOTALREGION union 2 sphere_1 sphere_2
+fix             REGION adsorbate wall/region TOTALREGION harmonic 200 0 1
+fix_modify      REGION energy yes
+
+#####################################  NVT #############################################################
+fix             NVT_ENSEMBLE all nvt temp $t $t 100 
+
+fix             DRAG all colvars drag.colvars
+run             20000
+unfix           DRAG
+
+fix             EQUIL all colvars run.colvars
+run             25000
+unfix           EQUIL
+
+dump            trajectory all xyz 250 snapshots.xyz
+dump_modify     trajectory element O Mn Cl C H Na
+
+fix             REALRUN all colvars run.colvars 
+run             500000
+unfix           REALRUN

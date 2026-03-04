@@ -1,0 +1,48 @@
+SYSTEM = LUXFOA
+
+PREC = Accurate
+ENCUT=520
+ALGO = Fast
+
+
+#PBE+D3
+GGA = PE
+IVDW = 11
+
+# parallelization
+LPLANE = .TRUE.    # distribute real-space mesh
+NCORE   = 4        # number of cores per computing node
+LREAL = AUTO
+
+# relax
+NELM = 40          # maximum of 40 electronic steps
+NELMIN = 2         # minimum of two steps
+NELMDL = -5        # no update of charge for 3 steps
+ISTART = 0         # startjob: no WAVECAR file
+ICHARG = 2         # charge: from atoms
+INIWAV = 1         # random initialization for wf.
+ISIF = 3           # atom positions
+IBRION = 2         # Conjugate gradient
+NSW = 2000         # maximum of 2000 ionic steps
+POTIM = 0.5        # Step size
+EDIFF = 1e-4       # Energy Convergence
+EDIFFG = -0.03     # Force Convergence
+
+# output
+LCHARG = .FALSE. 
+LWAVE = .FALSE. 
+
+
+# Symmetry Precision
+SYMPREC = 1E-03    # prevent symmetry error
+
+ISPIN = 2
+MAGMOM = 192*0 96*0 240*0 56*5 48*0
+
+LDAU      = .TRUE.
+LDAUTYPE  = 2
+LDAUL     = -1 -1 -1 2 -1
+LDAUU     = 0.00 0.00 0.00 4.00 0.00
+LDAUJ     = 0.00 0.00 0.00 0.00 0.00
+LDAUPRINT = 2
+LMAXMIX   = 4

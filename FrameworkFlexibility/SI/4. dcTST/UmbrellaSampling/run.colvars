@@ -1,0 +1,21 @@
+#TEMPLATE
+colvarsTrajFrequency 1 		
+colvarsRestartFrequency 10000
+
+colvar {
+  name rc
+
+  distanceZ {
+    main {atomNumbers 1345}
+    scalable off
+    ref  {dummyAtom (13.67627147, 13.71276217, 13.65892066)} # starting point of the RC
+    axis {(1, 0, 0)} # direction of the RC
+  }
+}
+
+harmonic {
+  name spring
+  colvars rc
+  forceConstant 15
+  centers 0 # change the centers from 0 to the RC length, with a stepsize of 0.1 angstrom each time
+}
